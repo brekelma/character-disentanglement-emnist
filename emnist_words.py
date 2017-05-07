@@ -9,18 +9,18 @@ import zipfile
 import gzip
 import shutil
 import struct 
-from sklearn.decomposition import FastICA
-import matplotlib.pyplot as plt
+#from sklearn.decomposition import FastICA
+#import matplotlib.pyplot as plt
 
 path = os.getcwd()
 
-def top_words(top_words_path = 'top_words.txt'):
+def top_words(top_words_path = 'top_words.txt', num_words = 100):
     text_file = open(os.path.join(path, top_words_path))
     lines = text_file.read().split('\r')
     topwords = []
     for line in lines:
         topwords.append(line)
-    return np.array(topwords[:100])
+    return np.array(topwords[:num_words])
 
 """
 Loosely inspired by http://abel.ee.ucla.edu/cvxopt/_downloads/mnist.py
@@ -109,10 +109,27 @@ def show(image):
     imgplot.set_interpolation('nearest')
     ax.xaxis.set_ticks_position('bottom')
     ax.yaxis.set_ticks_position('right')
-    pyplot.show()
+    #pyplot.show()
+
+def save(image, fn, save_path = 'examples'):
+    from matplotlib import pyplot
+    import matplotlib as mpl
+    fig = pyplot.figure()
+    ax = fig.add_subplot(1,1,1)
+    imgplot = ax.imshow(image, cmap=mpl.cm.Greys)
+    imgplot.set_interpolation('nearest')
+    ax.xaxis.set_ticks_position('bottom')
+    ax.yaxis.set_ticks_position('right')
+    try:
+        os.mkdir(os.path.join(path, save_path))
+    except:
+        pass
+    fig.savefig(os.path.join(path, save_path, fn))
 
 
-def get_data(per_word = 600, seed = 0, top_words = top_words(), show_img = False, word_len = 3):
+
+
+def get_data(per_word = 600, seed = 0, top_words = top_words(num_words = 100), save_img = False, word_len = 3):
     np.random.seed(seed)
     letters_dict = read_data(dataset = "training")
     original_dim = word_len*letters_dict[1][1].shape[0]*letters_dict[1][1].shape[1]
@@ -136,13 +153,15 @@ def get_data(per_word = 600, seed = 0, top_words = top_words(), show_img = False
             temp = np.concatenate((temp, letters_dict[letter_idxs[2]][k]), axis = 0)
             word_imgs[img_count] = np.reshape(temp.T, (original_dim))
 
-            if show_img is True:
-                show(np.reshape(word_imgs[img_count], (28,84)))
+            if save_img is True:
+                fn = top_words[word_idx]+'_'+ str(m)+ '.pdf'
+                #show(np.reshape(word_imgs[img_count], (temp.shape[1],temp.shape[0]))
+                save(np.reshape(word_imgs[img_count], (temp.shape[1],temp.shape[0])), fn)
             img_count = img_count + 1
     return word_imgs
 
 if __name__ == "__main__":
-    word_imgs = get_data(per_word = 600, seed = 0, show_img = False)
+    word_imgs = get_data(per_word = 1, seed = 0, save_img = True)
     
 
     #ica = FastICA(n_components=26)
