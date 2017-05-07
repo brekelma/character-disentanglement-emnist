@@ -2,20 +2,17 @@ import os
 import numpy as np
 import string
 import random
-import scipy
-import matplotlib.pyplot as plt
 from scipy import ndimage
 import cPickle
-from sklearn.decomposition import FastICA
 from urllib import urlretrieve
-#import zipfile
-#import shutil
+import zipfile
+import gzip
+import shutil
 import struct 
+from sklearn.decomposition import FastICA
+import matplotlib.pyplot as plt
 
 path = os.getcwd()
-# How many samples per word?  Assuming we want balance across words
-# per_word = 600
-# Display each image in succession for testing.  Note images are rotated 90*, need to fix this
 
 def top_words(top_words_path = 'top_words.txt'):
     text_file = open(os.path.join(path, top_words_path)) # 'gzip/emnist-letters/emnist-letters-mapping.txt'))
@@ -57,10 +54,15 @@ def read_data(dataset = "training",  letters_path = 'data', elements = 26):
             os.mkdir(os.path.join(path, letters_path))
         except:
             pass
+        try:
+            os.mkdir(os.path.join(path, letters_path, zip_path))
+        except:
+            pass
         fn = os.path.join(path, letters_path, 'emnist.zip')
-        print 'downloading data set.  this may take some time!'
-        #url = urllib.URLopener().retrieve('http://biometrics.nist.gov/cs_links/EMNIST/gzip.zip', fn)
-        #url = urlretrieve('http://biometrics.nist.gov/cs_links/EMNIST/gzip.zip', fn)      
+        if not os.path.isfile(fn):
+            print 'downloading data set.  this may take some time!'
+            url = urlretrieve('http://biometrics.nist.gov/cs_links/EMNIST/gzip.zip', fn)   
+
         zip_path = 'gzip'
         with zipfile.ZipFile(fn, 'r') as zip_file:
             for member in zip_file.namelist():
@@ -69,37 +71,25 @@ def read_data(dataset = "training",  letters_path = 'data', elements = 26):
                 if not filename:
                     continue
                 if filename in ['emnist-letters-train-images-idx3-ubyte.gz', 'emnist-letters-test-images-idx3-ubyte.gz', 'emnist-letters-train-labels-idx1-ubyte.gz', 'emnist-letters-test-labels-idx1-ubyte.gz']:
-                    print 'in extract'
-                    # with open(os.path.join(zip_path, filename), 'wb') as f:
-                    #    f.write(zip_file.read(icon[1]))
-
                     zip_file.extract(member, os.path.join(path, letters_path))
-                    #print 'here'
-                    ## copy file (taken from zipfile's extract)
-                    source = zip_file.open(member, 'r')
-                    source_file = source.read()
-                    source.close()
-                    target = file(os.path.join(path, letters_path, os.path.splitext(filename)[0]), "wb")
-                    target.write(source_file)
+                    f = gzip.open(os.path.join(path, letters_path, member), 'rb')
+                    content = f.read()
+                    f.close()
+                    target = open(os.path.join(path, letters_path, os.path.splitext(filename)[0]), 'wb')
+                    target.write(content)
                     target.close()
                     shutil.rmtree(os.path.join(path, letters_path, member), ignore_errors = True)
-                    #with source, target:
-                    #shutil.copyfileobj(source, target)
-                    
-        zip_file.close()
+            zip_file.close()
         shutil.rmtree(os.path.join(path, letters_path, zip_path), ignore_errors = True)
         
         with open(fname_lbl, 'rb') as flbl:
             magic, num = struct.unpack(">II", flbl.read(8))
             lbl = np.fromfile(flbl, dtype=np.int8)
-            print 'new-label'    
-
+   
     with open(fname_img, 'rb') as fimg:
         magic, num, rows, cols = struct.unpack(">IIII", fimg.read(16))
-        print rows, cols, len(lbl), np.fromfile(fimg, dtype = np.uint8).shape
-        print fname_img
         img = np.fromfile(fimg, dtype=np.uint8).reshape(len(lbl), rows, cols)
-
+   
     get_img = lambda idx: (lbl[idx], img[idx])
 
 
