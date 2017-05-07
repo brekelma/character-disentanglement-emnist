@@ -1,5 +1,4 @@
 import os
-import struct
 import numpy as np
 import string
 import random
@@ -8,9 +7,10 @@ import matplotlib.pyplot as plt
 from scipy import ndimage
 import cPickle
 from sklearn.decomposition import FastICA
-import urllib #import urlretrieve
-import zipfile
-import shutil
+from urllib import urlretrieve
+#import zipfile
+#import shutil
+import struct 
 
 path = os.getcwd()
 # How many samples per word?  Assuming we want balance across words
@@ -30,7 +30,7 @@ Loosely inspired by http://abel.ee.ucla.edu/cvxopt/_downloads/mnist.py
 which is GPL licensed.
 """
 
-def read(dataset = "training",  letters_path = 'data', elements = 26):
+def read_data(dataset = "training",  letters_path = 'data', elements = 26):
     """
     Python function for importing the MNIST data set.  It returns an iterator
     of 2-tuples with the first element being the label and the second element
@@ -38,12 +38,12 @@ def read(dataset = "training",  letters_path = 'data', elements = 26):
     """
 
     if dataset is "training":
-        fname_img = os.path.join(path, letters_path, 'emnist-letters-train-images-idx3-ubyte.gz')
-        fname_lbl = os.path.join(path, letters_path, 'emnist-letters-train-labels-idx1-ubyte.gz')
+        fname_img = os.path.join(path, letters_path, 'emnist-letters-train-images-idx3-ubyte')
+        fname_lbl = os.path.join(path, letters_path, 'emnist-letters-train-labels-idx1-ubyte')
 
     elif dataset is "testing":
-        fname_img = os.path.join(path, letters_path, 'emnist-letters-test-images-idx3-ubyte.gz')
-        fname_lbl = os.path.join(path, letters_path, 'emnist-letters-test-labels-idx1-ubyte.gz')
+        fname_img = os.path.join(path, letters_path, 'emnist-letters-test-images-idx3-ubyte')
+        fname_lbl = os.path.join(path, letters_path, 'emnist-letters-test-labels-idx1-ubyte')
     else:
         raise ValueError, "dataset must be 'testing' or 'training'"
 
@@ -58,8 +58,8 @@ def read(dataset = "training",  letters_path = 'data', elements = 26):
         except:
             pass
         fn = os.path.join(path, letters_path, 'emnist.zip')
-        print 'downloading data set into folder.  this may take some time!'
-        url = urllib.URLopener().retrieve('http://biometrics.nist.gov/cs_links/EMNIST/gzip.zip', fn)
+        print 'downloading data set.  this may take some time!'
+        #url = urllib.URLopener().retrieve('http://biometrics.nist.gov/cs_links/EMNIST/gzip.zip', fn)
         #url = urlretrieve('http://biometrics.nist.gov/cs_links/EMNIST/gzip.zip', fn)      
         zip_path = 'gzip'
         with zipfile.ZipFile(fn, 'r') as zip_file:
@@ -69,23 +69,30 @@ def read(dataset = "training",  letters_path = 'data', elements = 26):
                 if not filename:
                     continue
                 if filename in ['emnist-letters-train-images-idx3-ubyte.gz', 'emnist-letters-test-images-idx3-ubyte.gz', 'emnist-letters-train-labels-idx1-ubyte.gz', 'emnist-letters-test-labels-idx1-ubyte.gz']:
-                    #print 'in extract'
+                    print 'in extract'
                     # with open(os.path.join(zip_path, filename), 'wb') as f:
                     #    f.write(zip_file.read(icon[1]))
 
                     zip_file.extract(member, os.path.join(path, letters_path))
                     #print 'here'
                     ## copy file (taken from zipfile's extract)
-                    source = zip_file.open(member)
-                    target = file(os.path.join(path, letters_path, filename), "wb")
+                    source = zip_file.open(member, 'r')
+                    source_file = source.read()
+                    source.close()
+                    target = file(os.path.join(path, letters_path, os.path.splitext(filename)[0]), "wb")
+                    target.write(source_file)
+                    target.close()
+                    shutil.rmtree(os.path.join(path, letters_path, member), ignore_errors = True)
                     #with source, target:
-                    shutil.copyfileobj(source, target)
+                    #shutil.copyfileobj(source, target)
+                    
         zip_file.close()
         shutil.rmtree(os.path.join(path, letters_path, zip_path), ignore_errors = True)
         
         with open(fname_lbl, 'rb') as flbl:
             magic, num = struct.unpack(">II", flbl.read(8))
-            lbl = np.fromfile(flbl, dtype=np.int8)    
+            lbl = np.fromfile(flbl, dtype=np.int8)
+            print 'new-label'    
 
     with open(fname_img, 'rb') as fimg:
         magic, num, rows, cols = struct.unpack(">IIII", fimg.read(16))
@@ -122,7 +129,7 @@ def show(image):
 
 def get_data(per_word = 500, seed = 0, top_words = top_words(), show_img = False, word_len = 3):
     np.random.seed(seed)
-    letters_dict = read(dataset = "training")
+    letters_dict = read_data(dataset = "training")
     original_dim = word_len*letters_dict[1][1].shape[0]*letters_dict[1][1].shape[1]
     word_imgs = np.zeros((per_word*len(top_words), original_dim))
     #word_imgs = {x:[] for x in range(len(top_words))} 
