@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 path = os.getcwd()
 
 def top_words(top_words_path = 'top_words.txt'):
-    text_file = open(os.path.join(path, top_words_path)) # 'gzip/emnist-letters/emnist-letters-mapping.txt'))
+    text_file = open(os.path.join(path, top_words_path))
     lines = text_file.read().split('\r')
     topwords = []
     for line in lines:
@@ -28,11 +28,6 @@ which is GPL licensed.
 """
 
 def read_data(dataset = "training",  letters_path = 'data', elements = 26):
-    """
-    Python function for importing the MNIST data set.  It returns an iterator
-    of 2-tuples with the first element being the label and the second element
-    being a numpy.uint8 2D array of pixel data for the given image.
-    """
 
     if dataset is "training":
         fname_img = os.path.join(path, letters_path, 'emnist-letters-train-images-idx3-ubyte')
@@ -117,7 +112,7 @@ def show(image):
     pyplot.show()
 
 
-def get_data(per_word = 500, seed = 0, top_words = top_words(), show_img = False, word_len = 3):
+def get_data(per_word = 600, seed = 0, top_words = top_words(), show_img = False, word_len = 3):
     np.random.seed(seed)
     letters_dict = read_data(dataset = "training")
     original_dim = word_len*letters_dict[1][1].shape[0]*letters_dict[1][1].shape[1]
@@ -147,7 +142,9 @@ def get_data(per_word = 500, seed = 0, top_words = top_words(), show_img = False
     return word_imgs
 
 if __name__ == "__main__":
-    word_imgs = get_data()
+    word_imgs = get_data(per_word = 600, seed = 0, show_img = False)
+    
+
     #ica = FastICA(n_components=26)
     #print word_imgs.shape
     #S_ = ica.fit_transform(word_imgs)  # Reconstruct signals
