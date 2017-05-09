@@ -27,13 +27,13 @@ Loosely inspired by http://abel.ee.ucla.edu/cvxopt/_downloads/mnist.py
 which is GPL licensed.
 """
 
-def read_data(dataset = "training",  letters_path = 'data', elements = 26):
+def read_data(dataset = "train",  letters_path = 'data', elements = 26):
 
-    if dataset is "training":
+    if dataset is "train":
         fname_img = os.path.join(path, letters_path, 'emnist-letters-train-images-idx3-ubyte')
         fname_lbl = os.path.join(path, letters_path, 'emnist-letters-train-labels-idx1-ubyte')
 
-    elif dataset is "testing":
+    elif dataset is "test":
         fname_img = os.path.join(path, letters_path, 'emnist-letters-test-images-idx3-ubyte')
         fname_lbl = os.path.join(path, letters_path, 'emnist-letters-test-labels-idx1-ubyte')
     else:
@@ -109,7 +109,7 @@ def show(image):
     imgplot.set_interpolation('nearest')
     ax.xaxis.set_ticks_position('bottom')
     ax.yaxis.set_ticks_position('right')
-    #pyplot.show()
+    pyplot.show()
 
 def save(image, fn, save_path = 'examples'):
     from matplotlib import pyplot
@@ -129,12 +129,16 @@ def save(image, fn, save_path = 'examples'):
 
 
 
-def get_data(per_word = 600, seed = 0, top_words = top_words(num_words = 100), save_img = False, word_len = 3):
+def get_data(per_word = 600, seed = 0, data = 'train', top_words = top_words(num_words = 100), save_img = False, word_len = 3, addl_path = None):
+    if addl_path is not None:
+        path = addl_path
+
     np.random.seed(seed)
-    letters_dict = read_data(dataset = "training")
+    letters_dict = read_data(dataset = data)
     original_dim = word_len*letters_dict[1][1].shape[0]*letters_dict[1][1].shape[1]
     word_imgs = np.zeros((per_word*len(top_words), original_dim))
-    #word_imgs = {x:[] for x in range(len(top_words))} 
+    word_labels = np.chararray((per_word*len(top_words)))
+    #word_imgs = {x:[] for x n range(len(top_words))} 
     for word_idx in range(len(top_words)):
         size = 1
         img_count = 0
@@ -152,13 +156,14 @@ def get_data(per_word = 600, seed = 0, top_words = top_words(num_words = 100), s
             temp = np.concatenate((letters_dict[letter_idxs[0]][i+1], letters_dict[letter_idxs[1]][j]), axis = 0)
             temp = np.concatenate((temp, letters_dict[letter_idxs[2]][k]), axis = 0)
             word_imgs[img_count] = np.reshape(temp.T, (original_dim))
+            word_labels[img_count] = top_words[word_idx]
 
             if save_img is True:
                 fn = top_words[word_idx]+'_'+ str(m)+ '.pdf'
                 #show(np.reshape(word_imgs[img_count], (temp.shape[1],temp.shape[0]))
                 save(np.reshape(word_imgs[img_count], (temp.shape[1],temp.shape[0])), fn)
             img_count = img_count + 1
-    return word_imgs
+    return word_imgs, word_labels
 
 if __name__ == "__main__":
     word_imgs = get_data(per_word = 1, seed = 0, save_img = True)
