@@ -562,34 +562,11 @@ if __name__ == "__main__":
             for i in indices:
                 if method == 'ICA':
                     recon_img = ica.inverse_transform(ica.transform(test_imgs[i,:].reshape(1, -1))).reshape((28,84))
-                    #save(recon_img, 'test_'+str(test_labels[i])+'.pdf', save_path = method_path) 
+                    save(recon_img, 'test_'+str(test_labels[i])+'.pdf', save_path = method_path) 
                 else:
                     recon_img = reconstructions[i,:].reshape((28,84))
-                    #save(recon_img, 'test_'+str(test_labels[i])+'.pdf', save_path = method_path)
-            
-                mse_sum_train  = mse_sum + np.sum((recon_img - test_img[i,:])**2)
-                bce_sum_train = bce_sum + np.mean(np.multiply(test_img[i,:], np.log(recon_img)) + np.multiply(1-test_img[i,:], np.log(1-recon_img)))
-
-            mse_train = .5*mse_sum_train #np.sqrt(mse_sum)
-            bce_train = np.mean(bce_sum_train)
-
-            for i in indices:
-                if method == 'ICA':
-                    recon_img = ica.inverse_transform(ica.transform(test_imgs[i,:].reshape(1, -1))).reshape((28,84))
-                    #save(recon_img, 'test_'+str(test_labels[i])+'.pdf', save_path = method_path) 
-                else:
-                    recon_img = reconstructions[i,:].reshape((28,84))
-                    #save(recon_img, 'test_'+str(test_labels[i])+'.pdf', save_path = method_path)
-            
-                mse_sum_test  = mse_sum_test + np.sum((recon_img - test_img[i,:])**2)
-                bce_sum_test = bce_sum_test + np.mean(np.multiply(test_img[i,:], np.log(recon_img)) + np.multiply(1-test_img[i,:], np.log(1-recon_img)))
-
-            mse_test = .5*mse_sum_test
-            bce_test = .5*bce_test
-
-            print "**** ", method, "**** "
-            print "MSE train: ", mse_train, " BCE train: ", bce_train
-            print "MSE test: ", mse_test, " BCE test: ", bce_test
+                    save(recon_img, 'test_'+str(test_labels[i])+'.pdf', save_path = method_path)
+                    
             # for i in range(per_word_array.shape[0]):  
             #     idx = np.sum(per_word_array[:i])
             #     #print method, ': ', idx
