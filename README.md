@@ -1,4 +1,6 @@
 # three-letter-mnist
+Handwritten Character Disentanglement Benchmark compiled from EMNIST dataset
+
 EMNIST Letters data set modified to create 3-letter words.  List of 100 commonly occuring 3 letter words is included in top_words.txt
 
 read_data checks if data set is available in this repository, and, if not, downloads, unzips, and prepares the data set.  It is called as the 'main' method.  
