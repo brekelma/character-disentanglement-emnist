@@ -1,0 +1,5 @@
+#requirements simply example versions
+numpy==1.12.1
+pyenchant==1.6.11  
+scipy== 0.19.0
+matplotlib==2.0.2
