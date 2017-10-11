@@ -20,7 +20,7 @@ class EMNIST():
         self.test_data = self.read_data(dataset = 'test')
 
         
-    def top_words_of_length(self, length, max_words = 1000, file_path = 'all_words.txt', return_probabilities = False):
+    def top_words_of_length(self, length, max_words = 300, file_path = 'all_words.txt', return_probabilities = False):
         '''	Base method for finding top words of given length in txt file lists of words.  File all_words.txt populate top 300k + words with occurence counts 
             (words & frequencies from  http://norvig.com/ngrams/count_1w.txt)
 
@@ -87,7 +87,7 @@ class EMNIST():
 
 
     def get_data(self, words, data = 'train', resample_letters = 'none', fixed_letters = True,  
-                    per_word = 1, seed = 3, save_all_imgs = False):
+                    per_word = 1, seed = 3, save_all = False):
 
         ''' Converts list of words to dataset of handwritten images:
             Parameters : 
@@ -166,7 +166,7 @@ class EMNIST():
                 # Rescale to be in range [0,1]
                 word_imgs[img_count] = np_img.T.reshape((original_dim))/255.0
                 
-                if save_all_imgs:
+                if save_all:
                     fn = words[word_idx]+'_'+ str(m)+ '.pdf'
                     self.save((word_imgs[img_count]).astype(float), fn)
                 
