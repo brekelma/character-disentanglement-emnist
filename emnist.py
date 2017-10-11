@@ -12,9 +12,8 @@ from itertools import product
 class EMNIST():
     def __init__(self, data_path = None, save_path = None):
 
-        self.cwd = os.getcwd()
-        self.save_path = save_path if save_path is not None else os.path.join(self.cwd, 'examples')
-        self.data_path = data_path if data_path is not None else os.path.join(self.cwd, 'data')
+        self.save_path = save_path if save_path is not None else 'examples'
+        self.data_path = data_path if data_path is not None else 'data'
         
         # data = dictionary with keys as letter index 1-26, values: 4800 images samples of 28x28 size
         self.train_data = self.read_data(dataset = 'train')
@@ -75,7 +74,6 @@ class EMNIST():
     def top_letters_by_position(self, words, n = 8):
         ''' Get the n top occuring letters in each position for the given words. Assumes all words are of the same length'''
         try:
-            print(len(words), len(words[0]), len(words[-1]))
             positions = np.concatenate([np.array([ord(words[w][i]) for i in range(len(words[w]))])[np.newaxis, :] for w in range(len(words))], axis =0)
         except:
             raise ValueError("Please ensure all words are the same length, or that there are no extra entries in word list.")
@@ -89,7 +87,7 @@ class EMNIST():
 
 
     def get_data(self, words, data = 'train', resample_letters = 'none', fixed_letters = True,  
-                    per_word = 1, seed = 0, save_all_imgs = False):
+                    per_word = 1, seed = 3, save_all_imgs = False):
 
         ''' Converts list of words to dataset of handwritten images:
             Parameters : 
@@ -150,10 +148,7 @@ class EMNIST():
             
             
             for m in range(per_word_):
-                #if not fixed_letters:
 
-                #if (not resample_letters == 'none') or (m == 0): #sample = 'normal' gives different letters within same word
-                
                 for pos in range(word_len):
                     img_sample[pos] = np.random.randint(0, len(letters_dict[letter_idxs[pos]])-1) 
                     if not resample_letters == 'none' or letter_samples[letter_idxs[pos]] == 0:
@@ -262,11 +257,10 @@ class EMNIST():
         Render a given numpy.uint8 2D array of pixel data.
         """
         from matplotlib import pyplot
-        import matplotlib as mpl
         fig = pyplot.figure()
         ax = fig.add_subplot(1,1,1)
         image = image.reshape((28,-1))
-        imgplot = ax.imshow(image, cmap=pyplot.cm.seismic, vmin =0, vmax = 1)
+        imgplot = ax.imshow(image, vmin =0, vmax = 1)
         imgplot.set_interpolation('nearest')
         pyplot.show()
 
@@ -275,7 +269,7 @@ class EMNIST():
         fig = pyplot.figure()
         ax = fig.add_subplot(1,1,1)
         image = image.reshape((28,-1))
-        imgplot = ax.imshow(image, cmap=pyplot.cm.seismic, vmin =0, vmax = 1)
+        imgplot = ax.imshow(image, vmin =0, vmax = 1)
         imgplot.set_interpolation('nearest')
 
         try:
