@@ -46,9 +46,6 @@ x_test, y_test = emnist.get_data(test_words, data = 'test', per_word = 1, resamp
 
 Construct dataset of images by specifying word list, whether to take images from EMNIST training or test data, and how many samples per_word (can be an integer or 1d array with indices matching word list).
 
--resample_letters = 'none': Same letter image for each instance of a letter in a word
--resample_letters = 'all' : Resample image for each instance of a letter in word
--resample_letters = 'words' : Use same letter image within same word sample : i.e same 'p' within word 'pip'
-
-*
-   
+..*resample_letters = 'none': Same letter image for each instance of a letter in a word
+..*resample_letters = 'all' : Resample image for each instance of a letter in word
+..*resample_letters = 'words' : Use same letter image within same word sample : i.e same 'p' within word 'pip'
