@@ -5,7 +5,8 @@ Handwritten Character Disentanglement Benchmark compiled from EMNIST dataset
 EMNIST class reads in handwritten character images and allows for flexible creation of word recognition datasets from the EMNIST letters found here :
 https://www.nist.gov/itl/iad/image-group/emnist-dataset
 
-See examples.py for usage.  Code below replicates dataset used in : 
+See examples.py for usage.  Code below replicates dataset used in :
+
 Ver Steeg et. al "Disentangled Representations via Synergy Minimization" https://arxiv.org/abs/1710.03839
 
 all_words.txt contains words listed by occurence frequency from Peter Norvig, according to Google Web Trillion Word Corpus.
