@@ -6,7 +6,7 @@ EMNIST class reads in handwritten character images and allows for flexible creat
 https://www.nist.gov/itl/iad/image-group/emnist-dataset
 
 See examples.py for usage.  Code below replicates dataset used in : 
-Ver Steeg et. al "Disentangled Representations via Synergy Minimization" 
+Ver Steeg et. al "Disentangled Representations via Synergy Minimization" https://arxiv.org/abs/1710.03839
 
 all_words.txt contains words listed by occurence frequency from Peter Norvig, according to Google Web Trillion Word Corpus.
 http://norvig.com/ngrams/   (count_1w.txt)
