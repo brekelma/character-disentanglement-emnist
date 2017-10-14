@@ -24,7 +24,8 @@ print('Length ', length, ' Words combined using letters: ')
 print(letters)
 train_words, test_words = emnist.valid_words_from_letters(letters)
 x_train, y_train = emnist.get_data(train_words, data = 'train', per_word = 1, resample_letters = 'none', save_all_imgs = True)
-x_test, y_test = emnist.get_data(test_words, data = 'test', per_word = 1, resample_letters = 'none')
+# here, we treat the test set as using the same letter images but consisting of invalid English words.  Set data = 'test' to sample EMNIST test set images
+x_test, y_test = emnist.get_data(test_words, data = 'train', per_word = 1, resample_letters = 'none')
 ```
 
 ### Useful Methods & Parameters
